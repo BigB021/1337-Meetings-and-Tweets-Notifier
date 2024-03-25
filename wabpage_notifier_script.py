@@ -20,12 +20,11 @@ def sign_in(page, email, password):
     page.goto(site, wait_until='networkidle')
     print("Filling email input..\n")
     # Update the selector to match the email input field
-    page.fill('input[name="user[email]"]', email)  # or use '#user_email' for ID selector
+    page.fill('input[name="user[email]"]', email)  # Use '#user_email' for ID selector
     print("Filling password input..\n")
     # Update the selector to match the password input field
-    page.fill('input[name="user[password]"]', password)  # or use '#user_password' for ID selector
+    page.fill('input[name="user[password]"]', password)  # Use '#user_password' for ID selector
     print("Submitting...\n")
-    # If the submit button selector is correct, keep it as it is. Otherwise, adjust it accordingly.
     page.click('input[type="submit"][value="Sign in"]')
     page.wait_for_load_state('networkidle')
 
@@ -54,7 +53,7 @@ def main():
         os.system('cls' if os.name == 'nt' else 'clear') # Clear terminal
         if current_content != last_content:
             print("Changes detected!!")
-            t_end = time.time() + 20 # Play the notification for 20 seconds
+            t_end = time.time() + 60 * 5 # Play the notification for 5 minutes
             while time.time() < t_end:
                 play_notification_sound()
             with open("last_content.txt", 'w') as file:

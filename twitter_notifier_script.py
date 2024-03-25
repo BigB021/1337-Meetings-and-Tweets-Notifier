@@ -32,7 +32,7 @@ def main():
                 play_notification_sound()
             last_entry_id = entries[0].id
         
-        # Wait for a specified time before checking again (e.g., 5 minutes)
+        # Wait for 5 minutes before checking again
         time.sleep(300)
 
 if __name__ == "__main__":
