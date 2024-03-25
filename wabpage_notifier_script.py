@@ -1,13 +1,16 @@
+# Author : Youssef AITBOUDDROUB
+# Notify user when changes occurs in the meetings page in 1337 website
+
 import os
 import time
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 import subprocess  # For playing sound without heavy dependencies
 
-# Consider using environment variables or a secure method to store credentials
-site = "https://candidature.1337.ma/meetings"
+# Using environment variables to store credentials
 email = os.getenv("MY_EMAIL")
 password = os.getenv("MY_PASSWORD")
+site = "https://candidature.1337.ma/meetings"
 notification_sound_path = "notification.mp3"
 
 def play_notification_sound():
@@ -48,7 +51,7 @@ def main():
                 last_content = file.read()
         except FileNotFoundError:
             last_content = None
-
+        os.system('cls' if os.name == 'nt' else 'clear') # Clear terminal
         if current_content != last_content:
             print("Changes detected!!")
             t_end = time.time() + 20 # Play the notification for 20 seconds
