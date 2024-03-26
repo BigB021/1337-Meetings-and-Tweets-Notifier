@@ -1,4 +1,4 @@
-## 1337 School Twitter and Website Notifier 
+## 1337 School Twitter and Website Notifier
 
 This project contains two Python scripts designed to notify the user of new tweets from 1337 School's Twitter account and changes to the meetings page on the 1337 website.
 
@@ -9,20 +9,24 @@ Website Change Notification: Monitors the 1337 School's meetings webpage for any
 
 # Requirements 
 
-**Python 3.x
-1. feedparser for parsing the RSS feed for Twitter notifications.
-* playwright for automating website interaction and monitoring changes.
-* beautifulsoup4 for parsing HTML content of the webpage.
-* An external tool like mpg123 for playing notification sounds.
+1. Python 3.x
+2. feedparser for parsing the RSS feed for Twitter notifications.
+3. playwright for automating website interaction and monitoring changes.
+4. beautifulsoup4 for parsing HTML content of the webpage.
+5. An external tool like mpg123 for playing notification sounds.
 
 ## Installation 
 
 1. Clone this repository to your local machine.
-* Navigate to the project directory and install the required Python packages:
+2. Navigate to the project directory and install the required Python packages:
+
     pip install feedparser playwright beautifulsoup4
-* Install the playwright browser instances:
+
+3. Install the playwright browser instances:
+
     playwright install
-* (Optional) If using a custom sound player, ensure it is installed and available in your system's PATH. For example, to install mpg123 on Ubuntu:
+
+4. (Optional) If using a custom sound player, ensure it is installed and available in your system's PATH. For example, to install mpg123 on Ubuntu:
 
     sudo apt-get install mpg123
 
@@ -44,7 +48,7 @@ To start monitoring for new tweets from the 1337 School's Twitter account, run:
 
     python twitter_notifier_script.py
 
-* Website Change Notification Script
+2. Website Change Notification Script
 To start monitoring for changes on the 1337 School's meetings webpage, run:
 
     python website_notifier_script.py
