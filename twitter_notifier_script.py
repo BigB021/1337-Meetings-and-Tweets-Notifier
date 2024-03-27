@@ -4,7 +4,7 @@
 import os
 import feedparser
 import time
-from webpage_notifier_script import play_notification_sound
+from webpage_notifier_script import WebMonitor
 import threading
 from datetime import datetime,timedelta
 
@@ -37,7 +37,7 @@ def main():
             print("⚠︎ ⚠︎ New tweet detected! ⚠︎ ⚠︎")
             t_end = time.time() + 20  # Play the notification for 20 seconds
             while time.time() < t_end:
-                play_notification_sound()
+                WebMonitor.play_notification_sound()
             last_entry_id = entries[0].id
         
         print("\n\nSleeping for 5 minutes before checking again...(っ- ‸ - ς)ᶻ 𝗓 𐰁")  
