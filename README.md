@@ -1,13 +1,13 @@
-## 1337 School Twitter and Website Notifier
+# 1337 School Twitter and Website Notifier
 
 This project contains two Python scripts designed to notify the user of new tweets from 1337 School's Twitter account and changes to the meetings page on the 1337 website.
 
-# Features 
+## Features 
 
 Twitter Notification: Monitors the 1337 School's Twitter account for new tweets and plays a notification sound when a new tweet is detected.
 Website Change Notification: Monitors the 1337 School's meetings webpage for any changes (e.g., new meeting announcements) and plays a notification sound when changes are detected.
 
-# Requirements 
+## Requirements 
 
 1. Python 3.x
 2. feedparser for parsing the RSS feed for Twitter notifications.
