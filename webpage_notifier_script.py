@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 email = os.getenv("MY_EMAIL")
 password = os.getenv("MY_PASSWORD")
+print(email, password)
 site = "https://candidature.1337.ma/meetings"
 notification_sound_path = "notification.mp3"
 
@@ -60,7 +61,7 @@ class WebMonitor:
     def main(self):
         while True:
             with sync_playwright() as p:
-                browser = p.firefox.launch(headless=True)
+                browser = p.firefox.launch(headless=False)
                 page = browser.new_page()
                 self.sign_in(page, email, password)
                 current_content = self.get_page_content(page)
