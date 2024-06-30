@@ -3,7 +3,6 @@
 
 import os
 import time
-import subprocess
 import threading
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
@@ -15,7 +14,6 @@ import pygame
 load_dotenv()
 email = os.getenv("MY_EMAIL")
 password = os.getenv("MY_PASSWORD")
-print(email, password)
 sign_in_page = "https://admission.1337.ma/en/users/sign_in"
 pool_page = "https://admission.1337.ma/candidature/piscine"
 notification_sound_path = "notification2.mp3"
@@ -38,7 +36,6 @@ class PoolMonitor:
 
     def log_message(self, message):
         with self.lock:
-            # Move up one line and clear line
             print("\033[F\033[K")
             print(message)
             # Ensure the execution time display is reprinted after logging
@@ -49,14 +46,8 @@ class PoolMonitor:
     def play_notification_sound(self):
         # Initialize pygame mixer
         pygame.mixer.init()
-
-        # Load the sound file
         sound = pygame.mixer.Sound(notification_sound_path)
-
-        # Play the sound
         sound.play()
-
-        # Wait for the sound to finish playing
         while pygame.mixer.get_busy():
             pygame.time.delay(100)
 
@@ -114,7 +105,7 @@ class PoolMonitor:
                     self.log_message("No changes detected.")
 
                 print("\n\nSleeping for 5 minutes before checking again...(っ- ‸ - ς)ᶻ 𝗓 𐰁")
-                time.sleep(300)  # Adjusted sleep to 5 minutes
+                time.sleep(300)  # Sleep to 5 minutes
 
     def notify_changes(self):
         t_end = time.time() + 60 * 5
