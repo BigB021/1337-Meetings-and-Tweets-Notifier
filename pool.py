@@ -64,10 +64,20 @@ class PoolMonitor:
             self.is_signed_in = True  # Update sign-in status
 
     def get_page_content(self, page):
+        # Check if the page title is "Loading..."
+        while page.title() == "Loading...":
+            print("Page is still loading. Skipping content retrieval.")
+            time.sleep(3)  
+
+        # Once loading is complete and title is not "Loading...", get the updated page content
         html_content = page.content()
         soup = BeautifulSoup(html_content, 'html.parser')
+
+        # Remove unnecessary elements
         for element in soup(["script", "style", "iframe", "meta"]):
             element.decompose()
+
+        # Return the cleaned text content of the page
         return soup.get_text().strip()
     
     def check_pool_availability(self, page):
@@ -80,11 +90,12 @@ class PoolMonitor:
 
     def main(self):
         with sync_playwright() as p:
-            browser = p.firefox.launch(headless=True)
+            browser = p.firefox.launch(headless=False)
             page = browser.new_page()
             self.sign_in(page, email, password)  # Sign in once
             page.goto(pool_page, wait_until='domcontentloaded', timeout=60000)  # Go directly to pool page
             while True:
+                page.reload(wait_until='domcontentloaded', timeout=60000)  # Refresh the page before checking
                 current_content = self.get_page_content(page)
                 self.check_pool_availability(page)
 
@@ -95,7 +106,7 @@ class PoolMonitor:
                     last_content = None
 
                 os.system('cls' if os.name == 'nt' else 'clear')
-                if current_content != last_content:
+                if current_content and current_content != last_content:
                     self.log_message("⚠︎ ⚠︎ Changes detected!! ⚠︎ ⚠︎")
                     self.notify_changes()
                     print("current content:", current_content)
@@ -105,15 +116,22 @@ class PoolMonitor:
                     self.log_message("No changes detected.")
 
                 print("\n\nSleeping for 5 minutes before checking again...(っ- ‸ - ς)ᶻ 𝗓 𐰁")
-                time.sleep(300)  # Sleep to 5 minutes
+                time.sleep(3)  # Sleep to 5 minutes
 
     def notify_changes(self):
-        t_end = time.time() + 60 * 5
+        t_end = time.time() + 6 * 1
         while time.time() < t_end:
             self.play_notification_sound()
 
 
 if __name__ == "__main__":
     monitor = PoolMonitor()
-    threading.Thread(target=monitor.display_execution_time, daemon=True).start()
-    monitor.main()
+    display_thread = threading.Thread(target=monitor.display_execution_time, daemon=True)
+    display_thread.start()
+    try:
+        monitor.main()
+    except KeyboardInterrupt:
+        print("\nTerminating script...")
+        monitor.stop_thread.set()  # Signal threads to stop
+        display_thread.join()  # Wait for the display thread to finish
+        print("Script terminated gracefully.")
