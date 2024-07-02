@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import pygame
+import threading
+import keyboard
 
 # Load environment variables
 load_dotenv()
@@ -115,13 +117,27 @@ class PoolMonitor:
                 else:
                     self.log_message("No changes detected.")
 
-                print("\n\nSleeping for 5 minutes before checking again...(っ- ‸ - ς)ᶻ 𝗓 𐰁")
-                time.sleep(3)  # Sleep to 5 minutes
+                print("\n\nSleeping for 30 seconds before checking again...(っ- ‸ - ς)ᶻ 𝗓 𐰁")
+                time.sleep(10)  # Sleep to 30 seconds
 
     def notify_changes(self):
-        t_end = time.time() + 6 * 1
-        while time.time() < t_end:
-            self.play_notification_sound()
+        def play_sound_continuously():
+            while not stop_thread.is_set():
+                self.play_notification_sound()
+
+        stop_thread = threading.Event()
+
+        # Start playing the notification sound in a separate thread
+        sound_thread = threading.Thread(target=play_sound_continuously)
+        sound_thread.start()
+
+        print("Press 'esc' to stop the notification sound...")
+        keyboard.wait('esc')  # Wait for the 'esc' key to be pressed
+        stop_thread.set()  # Signal the thread to stop
+        sound_thread.join()  # Wait for the sound thread to finish
+
+        # Continue with the rest of the tasks
+        print("Notification stopped. Continuing with other tasks...")
 
 
 if __name__ == "__main__":
