@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import pygame
 import threading
 import keyboard
+import hashlib
 
 # Load environment variables
 load_dotenv()
@@ -65,22 +66,23 @@ class PoolMonitor:
             page.wait_for_load_state('networkidle')
             self.is_signed_in = True  # Update sign-in status
 
+    def compute_hash(self, content):
+        """Compute SHA-256 hash of the given content."""
+        return hashlib.sha256(content.encode('utf-8')).hexdigest()
+
     def get_page_content(self, page):
-        # Check if the page title is "Loading..."
+        # Existing implementation, but return the hash of the content at the end
         while page.title() == "Loading...":
             print("Page is still loading. Skipping content retrieval.")
-            time.sleep(3)  
+            time.sleep(3)
 
-        # Once loading is complete and title is not "Loading...", get the updated page content
         html_content = page.content()
         soup = BeautifulSoup(html_content, 'html.parser')
-
-        # Remove unnecessary elements
         for element in soup(["script", "style", "iframe", "meta"]):
             element.decompose()
-
-        # Return the cleaned text content of the page
-        return soup.get_text().strip()
+        cleaned_text = soup.get_text().strip()
+        # Compute and return the hash of the cleaned text
+        return self.compute_hash(cleaned_text)
     
     def check_pool_availability(self, page):
         pool_container_selector = 'div.flex.flex-col.justify-center.items-center.bg-gray-100.p-20.rounded-sm'
@@ -101,31 +103,31 @@ class PoolMonitor:
         with sync_playwright() as p:
             browser = p.firefox.launch(headless=False)
             page = browser.new_page()
-            self.sign_in(page, email, password)  # Sign in once
-            page.goto(pool_page, wait_until='domcontentloaded', timeout=60000)  # Go directly to pool page
+            self.sign_in(page, email, password)
+            page.goto(pool_page, wait_until='domcontentloaded', timeout=60000)
             while True:
-                page.reload(wait_until='domcontentloaded', timeout=60000)  # Refresh the page before checking
-                current_content = self.get_page_content(page)
+                page.reload(wait_until='domcontentloaded', timeout=60000)
+                current_hash = self.get_page_content(page)  # Now returns a hash
                 self.check_pool_availability(page)
 
                 try:
                     with open(content_file, 'r') as file:
-                        last_content = file.read()
+                        last_hash = file.read()
                 except FileNotFoundError:
-                    last_content = None
+                    last_hash = None
 
                 os.system('cls' if os.name == 'nt' else 'clear')
-                if current_content and current_content != last_content:
+                if current_hash and current_hash != last_hash:
                     self.log_message("⚠︎ ⚠︎ Changes detected!! ⚠︎ ⚠︎")
                     self.notify_changes()
-                    print("current content:", current_content)
+                    print("Hash of current content:", current_hash)
                     with open(content_file, 'w') as file:
-                        file.write(current_content)
+                        file.write(current_hash)
                 else:
                     self.log_message("No changes detected.")
 
                 print("\n\nSleeping for 30 seconds before checking again...(っ- ‸ - ς)ᶻ 𝗓 𐰁")
-                time.sleep(30) 
+                time.sleep(30)
 
     def notify_changes(self):
         def play_sound_continuously():
