@@ -84,12 +84,19 @@ class PoolMonitor:
     
     def check_pool_availability(self, page):
         pool_container_selector = 'div.flex.flex-col.justify-center.items-center.bg-gray-100.p-20.rounded-sm'
-        available_text = "Any available Pool will appear here"
-        if page.text_content(pool_container_selector).strip() == available_text:
-            print("No available pools at the moment.")
-        else:
-            print("There are available pools!")
-
+        available_text = "any available pool will appear here"  # Lowercased for normalization
+        try:
+            page_content = page.text_content(pool_container_selector).strip().lower()  # Normalize page content
+            if available_text in page_content:  # Check if available_text is contained in page_content
+                print("No available pools at the moment.")
+                return False
+            else:
+                print("There are available pools!")
+                return True
+        except Exception as e:
+            print(f"Error checking pool availability: {e}")
+            return False  # Assuming no availability in case of error
+        
     def main(self):
         with sync_playwright() as p:
             browser = p.firefox.launch(headless=False)
@@ -118,7 +125,7 @@ class PoolMonitor:
                     self.log_message("No changes detected.")
 
                 print("\n\nSleeping for 30 seconds before checking again...(っ- ‸ - ς)ᶻ 𝗓 𐰁")
-                time.sleep(10)  # Sleep to 30 seconds
+                time.sleep(30) 
 
     def notify_changes(self):
         def play_sound_continuously():
@@ -132,7 +139,7 @@ class PoolMonitor:
         sound_thread.start()
 
         print("Press 'esc' to stop the notification sound...")
-        keyboard.wait('esc')  # Wait for the 'esc' key to be pressed
+        keyboard.wait('esc') 
         stop_thread.set()  # Signal the thread to stop
         sound_thread.join()  # Wait for the sound thread to finish
 
