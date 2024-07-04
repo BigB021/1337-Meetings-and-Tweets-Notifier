@@ -71,7 +71,7 @@ class PoolMonitor:
         return hashlib.sha256(content.encode('utf-8')).hexdigest()
 
     def get_page_content(self, page):
-        # Existing implementation, but return the hash of the content at the end
+        page.wait_for_load_state('networkidle')
         while page.title() == "Loading...":
             print("Page is still loading. Skipping content retrieval.")
             time.sleep(3)
